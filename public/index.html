@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Práctica de evaluación Socket</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: radial-gradient(at 67.82077535796752% 83.5476837169792%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 82.79572228613357% 59.10668973254039%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 92.618235286229% 19.210216504299773%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 35.58800383058863% 80.10106711815203%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 12.825080872166028% 2.4846941151079216%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 32.72994296565602% 93.00532215611626%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 31.765716064184435% 23.1658934906542%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(270.2702702702703, 69.81132075471697%, 31.176470588235293%, 0) 100%), radial-gradient(at 13.33029452228417% 87.06130841657426%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 1) 0%, hsla(329.72972972972974, 69.81132075471697%, 31.176470588235293%, 0) 100%);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #panel-bienvenida {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px 20px; /* Ajustado para hacerlo más alto */
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            width: 50%;
+            margin: auto;
+            transition: all 0.5s ease-in-out; /* Transición de entrada y salida */
+        }
+
+        #panel-bienvenida.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #6a11cb;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2575fc;
+        }
+
+        #app-chat {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            width: 60%;
+            margin: auto;
+        }
+
+        .nube {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .box {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #ventana-mensajes {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #output, #escribiendo-mensaje {
+            color: #fff;
+        }
+
+        #output p {
+            color: #fff;
+        }
+
+        #escribiendo-mensaje p {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="panel-bienvenida">
+        <h2>Práctica de evaluación usando Sockets de comunicación</h2>
+        <input id="persona" type="text" placeholder="Ingresa tu nombre">
+        <button id="ingresar" onclick="ingresarAlChat()">Ingresar al chat</button>
+    </div>
+
+    <div id="app-chat" style="display:none;">
+        <h2>Práctica de evaluación 1er. parcial - Alumno:Allan Jair Sanchez Zepeda</h2>
+        <h2 class="nube box">Chat con socket</h2>
+        <div id="ventana-mensajes">
+            <div id="output"></div>
+            <div id="escribiendo-mensaje"></div>
+        </div>
+        <input id="usuario" type="text" placeholder="Tu nombre">
+        <input id="mensaje" type="text" placeholder="Ingresa un mensaje">
+        <button id="enviar">Enviar</button>
+    </div>
+
+    <script src="/chat.js"></script>
+    <script>
+        // Cargar el sonido desde la carpeta pública
+        const notificationSound = new Audio('/sonido.mp3');
+
+        // Reproducir sonido cuando se envía un mensaje
+        document.getElementById('enviar').addEventListener('click', function() {
+            if (document.getElementById('mensaje').value) {
+                notificationSound.play().catch(error => {
+                    console.error('Error al reproducir el sonido:', error);
+                });
+            }
+        });
+
+        // Reproducir sonido cuando se recibe un mensaje
+        socket.on('chat', function(data) {
+            notificationSound.play().catch(error => {
+                console.error('Error al reproducir el sonido:', error);
+            });
+        });
+    </script>
+</body>
+</html>
