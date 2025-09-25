@@ -126,23 +126,20 @@
 
     <script src="/chat.js"></script>
     <script>
-        // Cargar el sonido desde la carpeta pública
-        const notificationSound = new Audio('/sonido.mp3');
+        // Función para generar un beep
+        function playBeep() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            oscillator.type = 'square'; // Tipo de onda
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Frecuencia en Hz
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1); // Duración del beep
+        }
 
-        // Reproducir sonido cuando se envía un mensaje
-        document.getElementById('enviar').addEventListener('click', function() {
-            if (document.getElementById('mensaje').value) {
-                notificationSound.play().catch(error => {
-                    console.error('Error al reproducir el sonido:', error);
-                });
-            }
-        });
-
-        // Reproducir sonido cuando se recibe un mensaje
+        // Reproducir beep al recibir un mensaje
         socket.on('chat', function(data) {
-            notificationSound.play().catch(error => {
-                console.error('Error al reproducir el sonido:', error);
-            });
+            playBeep();
         });
     </script>
 </body>
