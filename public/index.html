@@ -115,9 +115,10 @@
     <div id="app-chat" style="display:none;">
         <h2>Práctica de evaluación 1er. parcial - Alumno:Allan Jair Sanchez Zepeda</h2>
         <h2 class="nube box">Chat con socket</h2>
-        <div id="ventana-mensajes">
-            <div id="output"></div>
-            <div id="escribiendo-mensaje"></div>
+        <div id="estado-conexion" style="text-align: left; font-size: 0.9rem; color: #4caf50; margin-bottom: 10px;">Conectado</div>
+        <div id="ventana-mensajes" style="background: #f9f9f9; border-radius: 10px; padding: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <div id="output" style="font-size: 1rem; color: #333; line-height: 1.5;"></div>
+            <div id="escribiendo-mensaje" style="font-style: italic; color: #9e9e9e; font-size: 0.8rem;"></div>
         </div>
         <input id="usuario" type="text" placeholder="Tu nombre">
         <input id="mensaje" type="text" placeholder="Ingresa un mensaje">
@@ -126,20 +127,14 @@
 
     <script src="/chat.js"></script>
     <script>
-        // Función para generar un beep
-        function playBeep() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            oscillator.type = 'square'; // Tipo de onda
-            oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Frecuencia en Hz
-            oscillator.connect(audioContext.destination);
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.1); // Duración del beep
-        }
+        // Cargar el sonido tipo "burbuja"
+        const notificationSound = new Audio('/bubble.mp3');
 
-        // Reproducir beep al recibir un mensaje
+        // Reproducir sonido al recibir un mensaje
         socket.on('chat', function(data) {
-            playBeep();
+            notificationSound.play().catch(error => {
+                console.error('Error al reproducir el sonido:', error);
+            });
         });
     </script>
 </body>

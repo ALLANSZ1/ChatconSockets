@@ -1,24 +1,25 @@
-var express = require('express');
-var socket = require('socket.io');
+const express = require('express');
+const socket = require('socket.io');
 
-var app = express();
-var server = app.listen(4000, function(){
-    console.log('Servidor corriendo en http://localhost:4000');
+const app = express();
+const PORT = 4000;
+
+const server = app.listen(PORT, function() {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
 app.use(express.static('public'));
 
-var io = socket(server);
+const io = socket(server);
 
-io.on('connection', function(socket){
-    console.log('Hay una conexion', socket.id);
+io.on('connection', function(socket) {
+    console.log('Usuario conectado:', socket.id);
 
-    socket.on('chat', function(data){
-        console.log(data);
+    socket.on('chat', function(data) {
         io.sockets.emit('chat', data);
     });
 
-    socket.on('typing', function(data){
+    socket.on('typing', function(data) {
         socket.broadcast.emit('typing', data);
     });
 });
