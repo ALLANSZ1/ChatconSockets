@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:4000');
+var socket = io.connect('http://3.140.247.121:4000');
 var persona = document.getElementById('persona'),
     appChat = document.getElementById('app-chat'),
     panelBienvenida = document.getElementById('panel-bienvenida'),
@@ -39,29 +39,25 @@ botonEnviar.addEventListener('click', function() {
     mensaje.value = '';
 });
 
-// Reproducir sonido solo cuando el receptor recibe un mensaje
+// Mostrar mensajes en el chat
 socket.on('chat', function(data) {
-    escribiendoMensaje.innerHTML = '';
+    escribiendoMensaje.innerHTML = ''; // Limpia el indicador de escritura
     output.innerHTML += '<p style="background: #e0f7fa; padding: 10px; border-radius: 5px; margin-bottom: 5px; color: #000;"><strong>' + data.usuario + ':</strong> ' + data.mensaje + '</p>';
-    if (data.usuario !== usuario.value) { // Verifica que el mensaje no sea del propio usuario
-        playBubbleSound();
-    }
 });
 
-// Mostrar indicador de escritura
+// Emitir evento de escritura cuando el usuario está escribiendo
 mensaje.addEventListener('keyup', function() {
-    if (persona.value) {
+    if (usuario.value) {
         socket.emit('typing', {
-            nombre: usuario.value,
-            texto: mensaje.value
+            nombre: usuario.value
         });
     }
 });
 
-// Mostrar indicador de escritura cuando otra persona esté escribiendo
+// Mostrar indicador de escritura con estilo visual destacado
 socket.on('typing', function(data) {
     if (data.nombre !== usuario.value) { // Verifica que el indicador no sea del propio usuario
-        escribiendoMensaje.innerHTML = '<p><em>' + data.nombre + ' está escribiendo...</em></p>';
+        escribiendoMensaje.innerHTML = '<p style="color: #4caf50; font-style: italic;"><em>' + data.nombre + ' está escribiendo...</em></p>';
     } else {
         escribiendoMensaje.innerHTML = '';
     }
