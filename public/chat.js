@@ -39,11 +39,13 @@ botonEnviar.addEventListener('click', function() {
     mensaje.value = '';
 });
 
-// Reproducir sonido al recibir un mensaje
+// Reproducir sonido solo cuando el receptor recibe un mensaje
 socket.on('chat', function(data) {
     escribiendoMensaje.innerHTML = '';
     output.innerHTML += '<p style="background: #e0f7fa; padding: 10px; border-radius: 5px; margin-bottom: 5px; color: #000;"><strong>' + data.usuario + ':</strong> ' + data.mensaje + '</p>';
-    playBubbleSound();
+    if (data.usuario !== usuario.value) { // Verifica que el mensaje no sea del propio usuario
+        playBubbleSound();
+    }
 });
 
 // Mostrar indicador de escritura
@@ -56,8 +58,9 @@ mensaje.addEventListener('keyup', function() {
     }
 });
 
+// Mostrar indicador de escritura cuando otra persona esté escribiendo
 socket.on('typing', function(data) {
-    if (data.texto) {
+    if (data.nombre !== usuario.value) { // Verifica que el indicador no sea del propio usuario
         escribiendoMensaje.innerHTML = '<p><em>' + data.nombre + ' está escribiendo...</em></p>';
     } else {
         escribiendoMensaje.innerHTML = '';
